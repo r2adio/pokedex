@@ -50,6 +50,11 @@ func getCommands() map[string]cliCommand {
 			description: "Turns off the program.",
 			callback:    callbackExit,
 		},
+		"map": {
+			name:        "map",
+			description: "Lists some location areas.",
+			callback:    callbackMap,
+		},
 	}
 }
 
