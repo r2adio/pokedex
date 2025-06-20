@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func startREPL() {
@@ -14,6 +15,46 @@ func startREPL() {
 		scanner.Scan()
 		text := scanner.Text()
 
-		fmt.Printf("echoing: %v\n", text)
+		cleaned := cleanInput(text)
+		// in case of no user input command, give new input prompt
+		if len(cleaned) == 0 {
+			continue
+		}
+
+		commandName := cleaned[0]
+		availableCommands := getCommands()
+		command, ok := availableCommands[commandName]
+		if !ok {
+			fmt.Println("Invalid command")
+			continue
+		}
+		command.callback()
 	}
+}
+
+type cliCommand struct {
+	name        string
+	description string
+	callback    func() error
+}
+
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Prints the help menu.",
+			callback:    callbackHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Turns off the program.",
+			callback:    callbackExit,
+		},
+	}
+}
+
+func cleanInput(str string) []string {
+	lowered := strings.ToLower(str)
+	words := strings.Fields(lowered)
+	return words
 }
